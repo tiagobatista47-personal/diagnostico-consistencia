@@ -176,7 +176,7 @@
           </label>
         </div>
         <div id="formError" class="error"></div>
-        <button class="btn" onclick="submitLead()">VER MEU DIAGNÓSTICO</button>
+        <button id="submitLeadBtn" class="btn" onclick="submitLead()">VER MEU DIAGNÓSTICO</button>
       </div>
     </section>
 
@@ -398,6 +398,7 @@
     let profileScores = {TA:0,MO:0,RI:0,SD:0,CE:0};
     let qScore = 0;
     let extras = {};
+    let isSubmitting = false;
 
     function show(id){
       document.querySelectorAll(".screen").forEach(s=>s.classList.remove("active"));
@@ -529,6 +530,8 @@
     }
 
     async function submitLead(){
+      if (isSubmitting) return;
+
       const name = document.getElementById("name").value.trim();
       const whatsapp = document.getElementById("whatsapp").value.trim();
       const email = document.getElementById("email").value.trim();
@@ -540,6 +543,13 @@
       if(whatsapp.replace(/\D/g,"").length < 10) return err.textContent = "Digite um WhatsApp válido com DDD.";
       if(!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) return err.textContent = "Digite um e-mail válido.";
       if(!consent) return err.textContent = "Você precisa aceitar o consentimento para continuar.";
+
+      isSubmitting = true;
+      const submitBtn = document.getElementById("submitLeadBtn");
+      submitBtn.disabled = true;
+      submitBtn.textContent = "SALVANDO DIAGNÓSTICO...";
+      submitBtn.style.opacity = "0.7";
+      submitBtn.style.cursor = "not-allowed";
 
       recalculate();
       const profile = getFinalProfile();
@@ -578,6 +588,14 @@
           });
         }catch(e){
           console.warn("Falha no envio ao webhook:",e);
+
+          isSubmitting = false;
+          const submitBtn = document.getElementById("submitLeadBtn");
+          submitBtn.disabled = false;
+          submitBtn.textContent = "VER MEU DIAGNÓSTICO";
+          submitBtn.style.opacity = "1";
+          submitBtn.style.cursor = "pointer";
+
           err.textContent = "Não foi possível salvar seu diagnóstico agora. Tente novamente em alguns instantes.";
           return;
         }
