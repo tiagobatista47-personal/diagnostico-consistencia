@@ -1,0 +1,606 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="description" content="Diagnóstico da Consistência — descubra o que pode estar impedindo você de manter uma rotina de treino consistente." />
+  <title>Diagnóstico da Consistência</title>
+  <style>
+    :root{
+      --bg:#0b0b0c;
+      --card:#141416;
+      --card2:#1b1b1e;
+      --text:#f5f1e8;
+      --muted:#aaa7a0;
+      --gold:#c9a35b;
+      --gold2:#e3c57d;
+      --line:#2a2a2e;
+      --danger:#e57373;
+      --success:#75b798;
+      --radius:20px;
+    }
+    *{box-sizing:border-box}
+    body{
+      margin:0;
+      font-family:"DM Sans", Arial, sans-serif;
+      background:linear-gradient(180deg,#09090a 0%,#111113 100%);
+      color:var(--text);
+      min-height:100vh;
+    }
+    .wrap{
+      width:min(760px,92%);
+      margin:0 auto;
+      padding:32px 0 56px;
+    }
+    .brand{
+      font-weight:700;
+      letter-spacing:.08em;
+      text-transform:uppercase;
+      color:var(--gold2);
+      font-size:14px;
+      margin-bottom:28px;
+    }
+    .screen{display:none; animation:fade .28s ease}
+    .screen.active{display:block}
+    @keyframes fade{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:translateY(0)}}
+    .card{
+      background:rgba(20,20,22,.96);
+      border:1px solid var(--line);
+      border-radius:var(--radius);
+      padding:28px;
+      box-shadow:0 14px 40px rgba(0,0,0,.25);
+    }
+    h1,h2,h3,p{margin-top:0}
+    h1{font-size:clamp(34px,7vw,58px);line-height:1.02;margin-bottom:18px}
+    h2{font-size:clamp(28px,5vw,40px);line-height:1.08;margin-bottom:14px}
+    h3{font-size:20px;margin-bottom:10px}
+    p{line-height:1.62;color:#e3dfd6}
+    .muted{color:var(--muted)}
+    .gold{color:var(--gold2)}
+    .btn{
+      appearance:none;border:0;cursor:pointer;width:100%;
+      border-radius:14px;padding:16px 18px;font-weight:800;
+      background:linear-gradient(135deg,var(--gold2),var(--gold));
+      color:#111;font-size:16px;margin-top:10px;
+    }
+    .btn.secondary{
+      background:transparent;color:var(--muted);border:1px solid var(--line)
+    }
+    .benefits{display:grid;gap:10px;margin:22px 0}
+    .benefit{
+      padding:14px 16px;border:1px solid var(--line);border-radius:14px;background:var(--card2)
+    }
+    .progress-shell{
+      width:100%;height:8px;background:#242428;border-radius:999px;overflow:hidden;margin:12px 0 26px
+    }
+    .progress{height:100%;width:0;background:linear-gradient(90deg,var(--gold),var(--gold2));transition:width .25s ease}
+    .qmeta{display:flex;justify-content:space-between;gap:12px;color:var(--muted);font-size:13px}
+    .answers{display:grid;gap:12px;margin-top:22px}
+    .answer{
+      width:100%;text-align:left;border:1px solid var(--line);
+      background:var(--card2);color:var(--text);padding:16px;border-radius:14px;
+      cursor:pointer;font-size:15px;line-height:1.45;transition:.15s ease;
+    }
+    .answer:hover{border-color:#555;background:#202024}
+    .answer.selected{border-color:var(--gold2);box-shadow:0 0 0 1px var(--gold2) inset}
+    .back{
+      margin-top:14px;background:transparent;border:0;color:var(--muted);cursor:pointer
+    }
+    .loader{display:grid;place-items:center;padding:40px 10px}
+    .spinner{
+      width:54px;height:54px;border:5px solid #2a2a2d;border-top-color:var(--gold2);border-radius:50%;
+      animation:spin 1s linear infinite;margin-bottom:20px
+    }
+    @keyframes spin{to{transform:rotate(360deg)}}
+    .fields{display:grid;gap:14px;margin-top:18px}
+    input{
+      width:100%;background:#111113;border:1px solid var(--line);color:var(--text);
+      padding:15px 14px;border-radius:12px;font-size:16px;outline:none
+    }
+    input:focus{border-color:var(--gold2)}
+    .check{
+      display:flex;gap:10px;align-items:flex-start;font-size:13px;color:var(--muted);line-height:1.45
+    }
+    .check input{width:auto;margin-top:3px}
+    .error{color:var(--danger);font-size:13px;margin-top:8px}
+    .result-hero{
+      padding:24px;border:1px solid #403720;border-radius:18px;background:linear-gradient(180deg,#17150f,#131315)
+    }
+    .pill{
+      display:inline-block;padding:7px 10px;border-radius:999px;background:#252116;color:var(--gold2);
+      border:1px solid #463d25;font-size:12px;font-weight:700;letter-spacing:.05em;text-transform:uppercase
+    }
+    .result-grid{display:grid;gap:14px;margin-top:18px}
+    .result-box{padding:18px;border:1px solid var(--line);border-radius:14px;background:var(--card2)}
+    .cta-live{margin-top:24px;padding:22px;border:1px solid #403720;border-radius:18px;background:#17150f}
+    .tiny{font-size:12px;color:var(--muted);margin-top:10px}
+    @media (max-width:560px){
+      .wrap{padding-top:22px}
+      .card{padding:20px}
+      .brand{margin-bottom:18px}
+    }
+  </style>
+</head>
+<body>
+  <main class="wrap">
+    <div class="brand">Código da Consistência</div>
+
+    <section id="start" class="screen active">
+      <div class="card">
+        <div class="pill">Diagnóstico gratuito</div>
+        <h1>Descubra o que está impedindo sua consistência no treino.</h1>
+        <p>Em poucos minutos, identifique seu padrão de consistência, sua principal barreira e o tipo de estratégia que mais combina com sua rotina.</p>
+        <div class="benefits">
+          <div class="benefit">✓ 12 perguntas rápidas</div>
+          <div class="benefit">✓ Resultado personalizado</div>
+          <div class="benefit">✓ Direcionamento prático para o próximo passo</div>
+        </div>
+        <button class="btn" onclick="startQuiz()">COMEÇAR DIAGNÓSTICO</button>
+        <div class="tiny">Tempo estimado: cerca de 3 minutos.</div>
+      </div>
+    </section>
+
+    <section id="quiz" class="screen">
+      <div class="card">
+        <div class="qmeta">
+          <span id="qCount">Pergunta 1 de 12</span>
+          <span id="qBlock">Diagnóstico</span>
+        </div>
+        <div class="progress-shell"><div id="progress" class="progress"></div></div>
+        <h2 id="questionText"></h2>
+        <div id="answers" class="answers"></div>
+        <button id="backBtn" class="back" onclick="goBack()">← Voltar</button>
+      </div>
+    </section>
+
+    <section id="processing" class="screen">
+      <div class="card loader">
+        <div class="spinner"></div>
+        <h2>Analisando suas respostas...</h2>
+        <p id="processingText" class="muted">Identificando seu padrão de consistência.</p>
+      </div>
+    </section>
+
+    <section id="lead" class="screen">
+      <div class="card">
+        <div class="pill">Seu diagnóstico está pronto</div>
+        <h2>Preencha seus dados para ver o resultado.</h2>
+        <p class="muted">Seus dados também serão usados para enviar conteúdos e informações relacionadas ao Código da Consistência.</p>
+        <div class="fields">
+          <input id="name" type="text" placeholder="Seu nome" />
+          <input id="whatsapp" type="tel" placeholder="WhatsApp com DDD" />
+          <input id="email" type="email" placeholder="Seu melhor e-mail" />
+          <label class="check">
+            <input id="consent" type="checkbox" />
+            <span>Concordo em receber comunicações relacionadas ao Código da Consistência e entendo que posso solicitar a exclusão dos meus dados.</span>
+          </label>
+        </div>
+        <div id="formError" class="error"></div>
+        <button class="btn" onclick="submitLead()">VER MEU DIAGNÓSTICO</button>
+      </div>
+    </section>
+
+    <section id="result" class="screen">
+      <div class="card">
+        <div class="result-hero">
+          <div class="pill">Seu Perfil de Consistência</div>
+          <h1 id="resultTitle" class="gold"></h1>
+          <p id="resultPhrase"></p>
+        </div>
+
+        <div class="result-grid">
+          <div class="result-box">
+            <h3>O que identificamos</h3>
+            <p id="resultIdentified"></p>
+          </div>
+          <div class="result-box">
+            <h3>O erro mais comum desse perfil</h3>
+            <p id="resultMistake"></p>
+          </div>
+          <div class="result-box">
+            <h3>O que você precisa desenvolver</h3>
+            <p id="resultDevelop"></p>
+          </div>
+        </div>
+
+        <div class="cta-live">
+          <h2>Agora vem a parte mais importante.</h2>
+          <p>Na Aula Código da Consistência, você vai entender como construir uma rotina de treino que se adapte à vida real sem depender de motivação constante.</p>
+          <p><strong>Data:</strong> [DEFINIR] &nbsp; • &nbsp; <strong>Horário:</strong> [DEFINIR]</p>
+          <a id="liveLink" href="#" target="_blank" rel="noopener">
+            <button class="btn">QUERO PARTICIPAR DA AULA</button>
+          </a>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <script>
+    // ===========================
+    // CONFIGURAÇÕES
+    // ===========================
+    const WEBHOOK_URL = "https://script.google.com/macros/s/AKfycbyy9_fXG4s9TAETYU3o3Q-r5gffuJ0Qs9bubkh1H6FpjVczcdY9PZrFvwxoTGDgReup-g/exec"; // Cole aqui a URL do webhook quando criarmos a integração
+    const LIVE_URL = "#";    // Cole aqui o link do grupo/inscrição da live
+
+    // ===========================
+    // DADOS DO QUIZ
+    // ===========================
+    const questions = [
+      {
+        text:"Hoje, como está sua relação com os treinos?",
+        block:"Situação atual",
+        answers:[
+          ["Estou treinando com bastante regularidade",{CE:2,Q:1}],
+          ["Treino, mas minha frequência varia bastante",{RI:2,Q:2}],
+          ["Estou tentando voltar a treinar",{TA:2,MO:1,RI:1,Q:2}],
+          ["Atualmente não estou treinando",{TA:1,MO:1,RI:1,Q:1}]
+        ]
+      },
+      {
+        text:"Nos últimos 12 meses, quantas vezes você parou e precisou recomeçar?",
+        block:"Situação atual",
+        answers:[
+          ["Nenhuma",{CE:2,Q:0}],
+          ["Uma vez",{TA:1,Q:1}],
+          ["Duas ou três vezes",{TA:2,MO:1,RI:1,Q:2}],
+          ["Já perdi as contas",{TA:3,MO:1,RI:1,Q:3}]
+        ]
+      },
+      {
+        text:"Quando você começa uma nova rotina de treino, o que mais parece com você?",
+        block:"Comportamento",
+        answers:[
+          ["Começo devagar e vou adaptando",{CE:2,Q:0}],
+          ["Tento cumprir tudo que foi planejado",{TA:1,RI:1,Q:1}],
+          ["Começo muito motivada e faço bastante",{TA:2,MO:2,Q:2}],
+          ["Tenho dificuldade até para estabelecer uma rotina",{RI:2,SD:1,Q:2}]
+        ]
+      },
+      {
+        text:"Quando sua semana fica mais corrida que o normal, o que acontece com seus treinos?",
+        block:"Comportamento",
+        answers:[
+          ["Adapto os treinos e continuo fazendo o que consigo",{CE:3,Q:0}],
+          ["Faço menos do que estava planejado",{RI:1,CE:1,Q:1}],
+          ["Acabo faltando vários dias",{TA:1,RI:2,Q:2}],
+          ["Normalmente paro completamente",{TA:2,RI:2,Q:3}]
+        ]
+      },
+      {
+        text:"Quando você perde alguns treinos, qual pensamento aparece com mais frequência?",
+        block:"Comportamento",
+        answers:[
+          ["Tudo bem, continuo no próximo treino.",{CE:3,Q:0}],
+          ["Preciso compensar o que perdi.",{TA:2,SD:1,Q:1}],
+          ["Essa semana já não deu certo.",{TA:3,RI:1,Q:2}],
+          ["Vou começar novamente quando conseguir fazer direito.",{TA:3,RI:1,Q:3}]
+        ]
+      },
+      {
+        text:"O que mais dificulta sua consistência hoje?",
+        block:"Barreira principal",
+        answers:[
+          ["Falta de tempo",{RI:3,Q:2}],
+          ["Cansaço e rotina corrida",{MO:1,RI:3,Q:2}],
+          ["Falta de motivação",{MO:3,Q:2}],
+          ["Não saber exatamente quanto ou como deveria treinar",{SD:3,Q:2}],
+          ["Começar bem, mas não conseguir manter",{TA:3,MO:1,RI:1,Q:3}]
+        ]
+      },
+      {
+        text:"Você sabe exatamente quanto precisa treinar para alcançar seu objetivo?",
+        block:"Clareza",
+        answers:[
+          ["Sim, tenho bastante clareza",{CE:2,Q:0}],
+          ["Tenho uma ideia, mas não tenho certeza",{SD:2,CE:1,Q:1}],
+          ["Acho que deveria treinar mais do que consigo atualmente",{TA:1,RI:2,SD:1,Q:2}],
+          ["Não faço ideia",{SD:3,Q:2}]
+        ]
+      },
+      {
+        text:"Qual é seu principal objetivo com o treino hoje?",
+        block:"Objetivo",
+        saveKey:"objetivo",
+        answers:[
+          ["Definir o corpo e melhorar minha composição corporal",{Q:1}],
+          ["Ganhar massa muscular",{Q:1}],
+          ["Emagrecer",{Q:1}],
+          ["Ficar mais forte, saudável e funcional",{Q:1}],
+          ["Voltar a me sentir bem com meu corpo e com o treino",{Q:1}]
+        ]
+      },
+      {
+        text:"Qual dessas frases mais representa sua relação com o treino?",
+        block:"Relação com o treino",
+        answers:[
+          ["Treinar já faz parte da minha rotina.",{CE:3,Q:0}],
+          ["Quando estou motivada, treino muito melhor.",{MO:3,Q:1}],
+          ["Se eu não conseguir fazer direito, muitas vezes prefiro nem fazer.",{TA:3,Q:2}],
+          ["Sinto que estou sempre tentando voltar.",{TA:2,MO:1,RI:1,Q:3}],
+          ["Quero treinar, mas ainda não encontrei uma rotina que funcione para mim.",{RI:3,Q:3}]
+        ]
+      },
+      {
+        text:"Se você pudesse mudar apenas UMA coisa nos próximos 6 meses, qual seria?",
+        block:"Desejo de mudança",
+        answers:[
+          ["Finalmente conseguir manter uma rotina",{TA:1,RI:2,Q:2}],
+          ["Ter resultados físicos sem precisar viver para treinar",{RI:2,CE:1,Q:2}],
+          ["Saber exatamente o que fazer e quanto treinar",{SD:3,Q:2}],
+          ["Parar de depender de motivação",{MO:3,Q:2}],
+          ["Evoluir meu corpo e minha força com acompanhamento",{CE:2,Q:3}]
+        ]
+      },
+      {
+        text:"Hoje, o que você sente que mais ajudaria a mudar essa situação?",
+        block:"Solução",
+        saveKey:"solucao",
+        answers:[
+          ["Ter um treino pronto para seguir",{SD:2,Q:1}],
+          ["Aprender a organizar melhor minha rotina",{RI:3,Q:2}],
+          ["Ter uma estratégia adaptada à minha realidade",{RI:2,SD:1,Q:3}],
+          ["Ter acompanhamento para ajustar treino, rotina e dificuldades ao longo do processo",{RI:1,CE:2,Q:4}]
+        ]
+      },
+      {
+        text:"Se existisse um acompanhamento para ajudá-la a construir essa rotina pelos próximos meses, como você se sentiria?",
+        block:"Intenção",
+        saveKey:"interesse",
+        answers:[
+          ["É exatamente o que estou procurando",{Q:5}],
+          ["Teria bastante interesse em conhecer",{Q:4}],
+          ["Talvez, dependeria de como funciona",{Q:2}],
+          ["Neste momento prefiro fazer sozinha",{Q:0}]
+        ]
+      }
+    ];
+
+    const profileData = {
+      TA:{
+        title:"Tudo ou Nada",
+        phrase:"Seu problema pode não ser começar. Pode ser não saber continuar quando a semana deixa de ser perfeita.",
+        identified:"Você tende a associar uma boa rotina a conseguir cumprir o plano quase por completo. Quando surgem falhas, atrasos ou semanas ruins, o treino perde força rapidamente.",
+        mistake:"Tentar recuperar a rotina perfeita em vez de manter uma versão possível do treino.",
+        develop:"Flexibilidade. Consistência não exige semanas perfeitas; exige capacidade de continuar mesmo quando a semana muda."
+      },
+      MO:{
+        title:"Dependente de Motivação",
+        phrase:"Você construiu uma rotina que funciona quando está motivada, mas ainda não uma que funcione quando não está.",
+        identified:"Seu desempenho tende a variar junto com sua motivação. Quando a empolgação está alta, você se envolve mais; quando ela cai, manter o treino se torna muito mais difícil.",
+        mistake:"Esperar vontade suficiente para agir.",
+        develop:"Clareza e estrutura. Uma rotina sólida precisa continuar funcionando mesmo nos dias comuns, sem depender de entusiasmo."
+      },
+      RI:{
+        title:"Rotina Incompatível",
+        phrase:"Talvez você não precise encontrar mais tempo para treinar. Precise de um treino que respeite o tempo que realmente possui.",
+        identified:"Você entende a importância de treinar, mas sua rotina real entra frequentemente em conflito com o modelo de treino que tenta seguir.",
+        mistake:"Tentar encaixar sua vida dentro de um plano rígido em vez de adaptar o plano à vida real.",
+        develop:"Adaptabilidade. Uma rotina consistente precisa sobreviver a trabalho, cansaço, compromissos e semanas fora do padrão."
+      },
+      SD:{
+        title:"Sem Direção",
+        phrase:"Quando você não sabe quanto é suficiente, qualquer quantidade pode parecer pouco.",
+        identified:"Você demonstra vontade de treinar, mas ainda existe pouca clareza sobre frequência, volume, progressão e o que realmente é necessário para seu objetivo.",
+        mistake:"Confundir fazer mais com fazer o necessário.",
+        develop:"Clareza. Saber o que fazer, quanto fazer e por que fazer reduz insegurança e torna a rotina muito mais sustentável."
+      },
+      CE:{
+        title:"Consistente sem Estratégia",
+        phrase:"Você já venceu uma parte importante do processo: consegue treinar. Agora precisa transformar frequência em progresso.",
+        identified:"O treino já aparece com mais estabilidade na sua rotina, mas ainda há espaço para melhorar organização, execução, progressão e direcionamento.",
+        mistake:"Achar que apenas comparecer ao treino garante que o estímulo esteja bem direcionado.",
+        develop:"Estratégia. Seu próximo nível vem de usar melhor o treino que você já consegue sustentar."
+      }
+    };
+
+    let current = 0;
+    let responses = [];
+    let profileScores = {TA:0,MO:0,RI:0,SD:0,CE:0};
+    let qScore = 0;
+    let extras = {};
+
+    function show(id){
+      document.querySelectorAll(".screen").forEach(s=>s.classList.remove("active"));
+      document.getElementById(id).classList.add("active");
+      window.scrollTo({top:0,behavior:"smooth"});
+    }
+
+    function startQuiz(){
+      show("quiz");
+      renderQuestion();
+    }
+
+    function renderQuestion(){
+      const q = questions[current];
+      document.getElementById("qCount").textContent = `Pergunta ${current+1} de ${questions.length}`;
+      document.getElementById("qBlock").textContent = q.block || "Diagnóstico";
+      document.getElementById("progress").style.width = `${((current)/questions.length)*100}%`;
+      document.getElementById("questionText").textContent = q.text;
+      const box = document.getElementById("answers");
+      box.innerHTML = "";
+      q.answers.forEach((a,idx)=>{
+        const btn = document.createElement("button");
+        btn.className = "answer";
+        btn.textContent = a[0];
+        if(responses[current] && responses[current].index===idx) btn.classList.add("selected");
+        btn.onclick = ()=>selectAnswer(idx);
+        box.appendChild(btn);
+      });
+      document.getElementById("backBtn").style.visibility = current===0 ? "hidden" : "visible";
+    }
+
+    function recalculate(){
+      profileScores = {TA:0,MO:0,RI:0,SD:0,CE:0};
+      qScore = 0;
+      extras = {};
+      responses.forEach((r,i)=>{
+        if(!r) return;
+        const q = questions[i];
+        const [label,score] = q.answers[r.index];
+        ["TA","MO","RI","SD","CE"].forEach(k=>profileScores[k]+=score[k]||0);
+        qScore += score.Q || 0;
+        if(q.saveKey) extras[q.saveKey] = label;
+      });
+    }
+
+    function selectAnswer(index){
+      responses[current] = {index};
+      recalculate();
+      setTimeout(()=>{
+        if(current < questions.length-1){
+          current++;
+          renderQuestion();
+        }else{
+          document.getElementById("progress").style.width = "100%";
+          showProcessing();
+        }
+      },150);
+    }
+
+    function goBack(){
+      if(current>0){
+        current--;
+        renderQuestion();
+      }
+    }
+
+    function showProcessing(){
+      show("processing");
+      const msgs = [
+        "Identificando seu padrão de consistência.",
+        "Analisando suas principais barreiras.",
+        "Preparando seu diagnóstico personalizado."
+      ];
+      let i=0;
+      const t = setInterval(()=>{
+        i++;
+        if(i<msgs.length) document.getElementById("processingText").textContent = msgs[i];
+      },600);
+      setTimeout(()=>{
+        clearInterval(t);
+        show("lead");
+      },1900);
+    }
+
+    function getFinalProfile(){
+      const max = Math.max(...Object.values(profileScores));
+      let tied = Object.keys(profileScores).filter(k=>profileScores[k]===max);
+      if(tied.length===1) return tied[0];
+
+      // Desempate por P9 -> P6 -> P5 -> P4
+      const priorityQuestions = [8,5,4,3];
+      for(const qi of priorityQuestions){
+        const r = responses[qi];
+        if(!r) continue;
+        const score = questions[qi].answers[r.index][1];
+        let best = tied
+          .map(k=>({k,v:score[k]||0}))
+          .sort((a,b)=>b.v-a.v);
+        if(best[0].v > 0 && (best.length===1 || best[0].v > best[1].v)) return best[0].k;
+      }
+      return tied[0];
+    }
+
+    function getQualification(){
+      const interesse = extras.interesse || "";
+      const solucao = extras.solucao || "";
+      const isAPlus = qScore >= 20 &&
+        interesse === "É exatamente o que estou procurando" &&
+        (
+          solucao === "Ter uma estratégia adaptada à minha realidade" ||
+          solucao === "Ter acompanhamento para ajustar treino, rotina e dificuldades ao longo do processo"
+        );
+
+      if(isAPlus) return "A+";
+      if(qScore >= 20) return "A";
+      if(qScore >= 13) return "B";
+      return "C";
+    }
+
+    function getUTMs(){
+      const p = new URLSearchParams(window.location.search);
+      return {
+        utm_source:p.get("utm_source")||"",
+        utm_medium:p.get("utm_medium")||"",
+        utm_campaign:p.get("utm_campaign")||"",
+        utm_content:p.get("utm_content")||"",
+        utm_term:p.get("utm_term")||""
+      };
+    }
+
+    async function submitLead(){
+      const name = document.getElementById("name").value.trim();
+      const whatsapp = document.getElementById("whatsapp").value.trim();
+      const email = document.getElementById("email").value.trim();
+      const consent = document.getElementById("consent").checked;
+      const err = document.getElementById("formError");
+      err.textContent = "";
+
+      if(name.length < 2) return err.textContent = "Digite seu nome.";
+      if(whatsapp.replace(/\D/g,"").length < 10) return err.textContent = "Digite um WhatsApp válido com DDD.";
+      if(!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) return err.textContent = "Digite um e-mail válido.";
+      if(!consent) return err.textContent = "Você precisa aceitar o consentimento para continuar.";
+
+      recalculate();
+      const profile = getFinalProfile();
+      const qualification = getQualification();
+
+      const rawAnswers = {};
+      responses.forEach((r,i)=>{
+        if(!r) return;
+        rawAnswers[`p${i+1}`] = questions[i].answers[r.index][0];
+      });
+
+      const payload = {
+        nome:name,
+        whatsapp,
+        email,
+        perfil:profileData[profile].title,
+        perfil_codigo:profile,
+        score_qualificacao:qScore,
+        qualificacao:qualification,
+        scores_perfil:{...profileScores},
+        objetivo:extras.objetivo || "",
+        solucao_desejada:extras.solucao || "",
+        interesse_acompanhamento:extras.interesse || "",
+        respostas:rawAnswers,
+        ...getUTMs(),
+        criado_em:new Date().toISOString()
+      };
+
+      if(WEBHOOK_URL){
+        try{
+          const response = await fetch(WEBHOOK_URL,{
+            method:"POST",
+            headers:{"Content-Type":"text/plain;charset=utf-8"},
+            body:JSON.stringify(payload)
+          });
+
+          if(!response.ok){
+            throw new Error("Falha no envio dos dados.");
+          }
+        }catch(e){
+          console.warn("Falha no envio ao webhook:",e);
+          err.textContent = "Não foi possível salvar seu diagnóstico agora. Tente novamente em alguns instantes.";
+          return;
+        }
+      }else{
+        console.log("Payload do lead:",payload);
+      }
+
+      renderResult(profile);
+    }
+
+    function renderResult(profile){
+      const d = profileData[profile];
+      document.getElementById("resultTitle").textContent = d.title;
+      document.getElementById("resultPhrase").textContent = d.phrase;
+      document.getElementById("resultIdentified").textContent = d.identified;
+      document.getElementById("resultMistake").textContent = d.mistake;
+      document.getElementById("resultDevelop").textContent = d.develop;
+      document.getElementById("liveLink").href = LIVE_URL || "#";
+      show("result");
+    }
+  </script>
+</body>
+</html>
