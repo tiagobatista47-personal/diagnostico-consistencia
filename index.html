@@ -235,8 +235,7 @@
     // CONFIGURAÇÕES
     // ===========================
     const WEBHOOK_URL = "https://script.google.com/macros/s/AKfycbyy9_fXG4s9TAETYU3o3Q-r5gffuJ0Qs9bubkh1H6FpjVczcdY9PZrFvwxoTGDgReup-g/exec"; // Cole aqui a URL do webhook quando criarmos a integração
-    const LIVE_URL = "https://chat.whatsapp.com/BbUwiBGAzAN803zowLhD1R?s=cl&p=i&mlu=0&amv=2";    // Cole aqui o link do grupo/inscrição da live
-
+    const EBOOK_URL = "https://drive.google.com/file/d/1Zu6jzPdjNZ9gVWrkFVOGJfXaNZw-baVX/view";
     // ===========================
     // DADOS DO QUIZ
     // ===========================
@@ -628,7 +627,7 @@
       document.getElementById("resultIdentified").textContent = d.identified;
       document.getElementById("resultMistake").textContent = d.mistake;
       document.getElementById("resultDevelop").textContent = d.develop;
-      document.getElementById("liveLink").href = LIVE_URL || "#";
+     document.getElementById("ebookLink").href = EBOOK_URL || "#";
       show("result");
     }
   </script>
