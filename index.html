@@ -131,7 +131,7 @@
         <h1>Descubra o que está impedindo sua consistência no treino.</h1>
         <p>Em poucos minutos, identifique seu padrão de consistência, sua principal barreira e o tipo de estratégia que mais combina com sua rotina.</p>
         <div class="benefits">
-          <div class="benefit">✓ 12 perguntas rápidas</div>
+          <div class="benefit">✓ 14 perguntas rápidas</div>
           <div class="benefit">✓ Resultado personalizado</div>
           <div class="benefit">✓ Direcionamento prático para o próximo passo</div>
         </div>
@@ -143,7 +143,7 @@
     <section id="quiz" class="screen">
       <div class="card">
         <div class="qmeta">
-          <span id="qCount">Pergunta 1 de 12</span>
+          <span id="qCount">Pergunta 1 de 14</span>
           <span id="qBlock">Diagnóstico</span>
         </div>
         <div class="progress-shell"><div id="progress" class="progress"></div></div>
@@ -204,27 +204,17 @@
         </div>
 
    <div class="cta-live">
-  <div class="pill">Seu próximo passo</div>
+  <div id="ctaPill" class="pill">Seu próximo passo</div>
 
-  <h2>Agora transforme esse diagnóstico em ação.</h2>
+  <h2 id="ctaTitle">Agora transforme esse diagnóstico em ação.</h2>
 
-  <p>
-    Você já identificou o que pode estar dificultando sua consistência.
-    O próximo passo é entender como construir uma rotina de treino que
-    funcione mesmo quando sua semana não é perfeita.
-  </p>
+  <p id="ctaText"></p>
 
-  <p>
-    No e-book gratuito <strong>5 Regras do Código da Consistência</strong>,
-    você vai conhecer os princípios que ajudam a tornar o treino mais
-    sustentável, eficiente e compatível com a vida real.
-  </p>
-
-  <a id="ebookLink" href="#" target="_blank" rel="noopener">
-    <button class="btn">QUERO CONHECER AS 5 REGRAS</button>
+  <a id="ctaLink" href="#" target="_blank" rel="noopener">
+    <button id="ctaButton" class="btn">CONTINUAR</button>
   </a>
 
-  <div class="tiny">E-book gratuito • acesso imediato</div>
+  <div id="ctaTiny" class="tiny"></div>
 </div>
       </div>
     </section>
@@ -236,6 +226,8 @@
     // ===========================
     const WEBHOOK_URL = "https://script.google.com/macros/s/AKfycbyy9_fXG4s9TAETYU3o3Q-r5gffuJ0Qs9bubkh1H6FpjVczcdY9PZrFvwxoTGDgReup-g/exec"; // Cole aqui a URL do webhook quando criarmos a integração
     const EBOOK_URL = "https://drive.google.com/file/d/1Zu6jzPdjNZ9gVWrkFVOGJfXaNZw-baVX/view";
+    const PREMIUM_URL = "https://wa.me/message/6LQPKTZXQUR5K1";
+    const INSTAGRAM_URL = "https://www.instagram.com/tiago.consistencia/";
     // ===========================
     // DADOS DO QUIZ
     // ===========================
@@ -365,6 +357,28 @@
           ["Teria bastante interesse em conhecer",{Q:4}],
           ["Talvez, dependeria de como funciona",{Q:2}],
           ["Neste momento prefiro fazer sozinha",{Q:0}]
+        ]
+      },
+      {
+        text:"Quando você gostaria de finalmente resolver essa dificuldade com os treinos?",
+        block:"Urgência",
+        saveKey:"urgencia",
+        answers:[
+          ["Quero começar agora",{Q:4}],
+          ["Nas próximas semanas",{Q:3}],
+          ["Nos próximos meses",{Q:1}],
+          ["Ainda não sei, estou apenas pesquisando",{Q:0}]
+        ]
+      },
+      {
+        text:"Hoje, quanto você sente que consegue resolver essa situação sozinha?",
+        block:"Necessidade de acompanhamento",
+        saveKey:"autonomia",
+        answers:[
+          ["Já tentei sozinha várias vezes e sinto que preciso de acompanhamento",{Q:4}],
+          ["Acho que consigo avançar, mas com orientação seria muito mais fácil",{Q:3}],
+          ["Acredito que consigo resolver sozinha se eu me organizar melhor",{Q:1}],
+          ["Não sinto necessidade de acompanhamento neste momento",{Q:0}]
         ]
       }
     ];
@@ -519,16 +533,41 @@
     function getQualification(){
       const interesse = extras.interesse || "";
       const solucao = extras.solucao || "";
-      const isAPlus = qScore >= 20 &&
+      const urgencia = extras.urgencia || "";
+      const autonomia = extras.autonomia || "";
+
+      const forteInteresse =
+        interesse === "É exatamente o que estou procurando" ||
+        interesse === "Teria bastante interesse em conhecer";
+
+      const solucaoPremium =
+        solucao === "Ter uma estratégia adaptada à minha realidade" ||
+        solucao === "Ter acompanhamento para ajustar treino, rotina e dificuldades ao longo do processo";
+
+      const urgenciaAlta =
+        urgencia === "Quero começar agora" ||
+        urgencia === "Nas próximas semanas";
+
+      const percebeNecessidade =
+        autonomia === "Já tentei sozinha várias vezes e sinto que preciso de acompanhamento" ||
+        autonomia === "Acho que consigo avançar, mas com orientação seria muito mais fácil";
+
+      const isAPlus =
+        qScore >= 30 &&
         interesse === "É exatamente o que estou procurando" &&
-        (
-          solucao === "Ter uma estratégia adaptada à minha realidade" ||
-          solucao === "Ter acompanhamento para ajustar treino, rotina e dificuldades ao longo do processo"
-        );
+        solucaoPremium &&
+        urgenciaAlta &&
+        percebeNecessidade;
+
+      const isA =
+        qScore >= 24 &&
+        forteInteresse &&
+        solucaoPremium &&
+        percebeNecessidade;
 
       if(isAPlus) return "A+";
-      if(qScore >= 20) return "A";
-      if(qScore >= 13) return "B";
+      if(isA) return "A";
+      if(qScore >= 15) return "B";
       return "C";
     }
 
@@ -587,6 +626,8 @@
         objetivo:extras.objetivo || "",
         solucao_desejada:extras.solucao || "",
         interesse_acompanhamento:extras.interesse || "",
+        urgencia:extras.urgencia || "",
+        autonomia_percebida:extras.autonomia || "",
         respostas:rawAnswers,
         ...getUTMs(),
         criado_em:new Date().toISOString()
@@ -617,17 +658,53 @@
         console.log("Payload do lead:",payload);
       }
 
-      renderResult(profile);
+      renderResult(profile, qualification);
     }
 
-    function renderResult(profile){
+    function renderResult(profile, qualification){
       const d = profileData[profile];
+
       document.getElementById("resultTitle").textContent = d.title;
       document.getElementById("resultPhrase").textContent = d.phrase;
       document.getElementById("resultIdentified").textContent = d.identified;
       document.getElementById("resultMistake").textContent = d.mistake;
       document.getElementById("resultDevelop").textContent = d.develop;
-     document.getElementById("ebookLink").href = EBOOK_URL || "#";
+
+      const ctaPill = document.getElementById("ctaPill");
+      const ctaTitle = document.getElementById("ctaTitle");
+      const ctaText = document.getElementById("ctaText");
+      const ctaLink = document.getElementById("ctaLink");
+      const ctaButton = document.getElementById("ctaButton");
+      const ctaTiny = document.getElementById("ctaTiny");
+
+      if(qualification === "A+" || qualification === "A"){
+        ctaPill.textContent = "Próximo passo recomendado";
+        ctaTitle.textContent = "Seu diagnóstico indica que uma estratégia individual pode fazer sentido para você.";
+        ctaText.textContent =
+          "Pelas suas respostas, você demonstra não apenas uma dificuldade real com a consistência, mas também interesse em construir uma solução adaptada à sua rotina. Se quiser, fale diretamente comigo para eu entender melhor o seu caso e avaliar se o acompanhamento do Código da Consistência faz sentido para você.";
+        ctaLink.href = PREMIUM_URL || "#";
+        ctaButton.textContent = "QUERO FALAR SOBRE O MEU CASO";
+        ctaTiny.textContent = "Conversa inicial • sem compromisso";
+      }
+      else if(qualification === "B"){
+        ctaPill.textContent = "Seu próximo passo";
+        ctaTitle.textContent = "Aprofunde os princípios do Código da Consistência.";
+        ctaText.textContent =
+          "Seu diagnóstico mostra que existem pontos importantes para desenvolver. Antes de pensar em um acompanhamento, conheça as 5 Regras do Código da Consistência e entenda como construir uma rotina de treino mais sustentável, eficiente e compatível com a vida real.";
+        ctaLink.href = EBOOK_URL || "#";
+        ctaButton.textContent = "QUERO CONHECER AS 5 REGRAS";
+        ctaTiny.textContent = "E-book gratuito • acesso imediato";
+      }
+      else{
+        ctaPill.textContent = "Continue desenvolvendo sua estratégia";
+        ctaTitle.textContent = "Consistência também se constrói com clareza.";
+        ctaText.textContent =
+          "Neste momento, o melhor próximo passo é continuar aprendendo e observando quais estratégias realmente funcionam na sua rotina. Acompanhe meus conteúdos sobre treino eficiente, consistência e aplicação prática do Código da Consistência.";
+        ctaLink.href = INSTAGRAM_URL || "#";
+        ctaButton.textContent = "ACOMPANHAR OS CONTEÚDOS";
+        ctaTiny.textContent = "@tiago.consistencia no Instagram";
+      }
+
       show("result");
     }
   </script>
