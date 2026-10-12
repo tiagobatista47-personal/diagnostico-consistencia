@@ -244,7 +244,7 @@
     // ===========================
     // CONFIGURAÇÕES
     // ===========================
-    const WEBHOOK_URL = "https://script.google.com/macros/s/AKfycbyy9_fXG4s9TAETYU3o3Q-r5gffuJ0Qs9bubkh1H6FpjVczcdY9PZrFvwxoTGDgReup-g/exec"; // Cole aqui a URL do webhook quando criarmos a integração
+    const WEBHOOK_URL = "https://script.google.com/macros/s/AKfycbyy9_fXG4s9TAETYU3o3Q-r5gffuJ0Qs9bubkh1H6FpjVczcdY9PZrFvwxoTGDgReup-g/exec";
     const EBOOK_URL = "https://drive.google.com/file/d/1Zu6jzPdjNZ9gVWrkFVOGJfXaNZw-baVX/view";
     const PREMIUM_URL = "https://wa.me/message/6LQPKTZXQUR5K1";
     const INSTAGRAM_URL = "https://www.instagram.com/tiago.consistencia/";
@@ -253,141 +253,148 @@
     // ===========================
     const questions = [
       {
-        text:"Hoje, como está sua relação com os treinos?",
+        text:"Seu treino parece focado no que realmente gera resultado… ou só te mantém ocupada?",
+        block:"Eficiência do treino",
+        answers:[
+          ["Foca no que realmente gera resultado",{CE:3,Q:0}],
+          ["Acho que mistura as duas coisas",{CE:1,SD:1,Q:1}],
+          ["Me mantém mais ocupada do que eficiente",{SD:3,RI:1,Q:3}],
+          ["Nunca pensei nisso",{SD:2,Q:1}],
+          ["Não estou treinando no momento",{TA:1,RI:1,Q:2}]
+        ]
+      },
+      {
+        text:"Hoje, qual dessas situações mais descreve sua relação com os treinos?",
         block:"Situação atual",
         answers:[
-          ["Estou treinando com bastante regularidade",{CE:2,Q:1}],
-          ["Treino, mas minha frequência varia bastante",{RI:2,Q:2}],
-          ["Estou tentando voltar a treinar",{TA:2,MO:1,RI:1,Q:2}],
-          ["Atualmente não estou treinando",{TA:1,MO:1,RI:1,Q:1}]
+          ["Consigo manter uma rotina com bastante regularidade",{CE:3,Q:0}],
+          ["Treino, mas minha frequência oscila bastante",{RI:2,Q:2}],
+          ["Vivo começando, parando e recomeçando",{TA:3,MO:1,RI:1,Q:3}],
+          ["Estou parada e quero voltar",{TA:2,MO:1,RI:2,Q:2}],
+          ["Ainda não consegui construir uma rotina de treino",{RI:3,SD:1,Q:2}]
         ]
       },
       {
-        text:"Nos últimos 12 meses, quantas vezes você parou e precisou recomeçar?",
-        block:"Situação atual",
+        text:"Quando sua semana fica mais corrida, o que costuma acontecer com seus treinos?",
+        block:"Adaptação à rotina",
         answers:[
-          ["Nenhuma",{CE:2,Q:0}],
-          ["Uma vez",{TA:1,Q:1}],
-          ["Duas ou três vezes",{TA:2,MO:1,RI:1,Q:2}],
-          ["Já perdi as contas",{TA:3,MO:1,RI:1,Q:3}]
+          ["Consigo adaptar e continuar",{CE:3,Q:0}],
+          ["Faço menos, mas ainda mantenho alguma coisa",{CE:1,RI:1,Q:1}],
+          ["Perco alguns treinos e tento compensar depois",{TA:2,RI:1,Q:2}],
+          ["Normalmente abandono a semana",{TA:2,RI:2,Q:3}],
+          ["Quando saio da rotina, demoro para voltar",{TA:3,RI:2,Q:3}]
         ]
       },
       {
-        text:"Quando você começa uma nova rotina de treino, o que mais parece com você?",
-        block:"Comportamento",
+        text:"Na sua opinião, hoje seu treino utiliza seu tempo de maneira eficiente para gerar resultado?",
+        block:"Eficiência do treino",
         answers:[
-          ["Começo devagar e vou adaptando",{CE:2,Q:0}],
-          ["Tento cumprir tudo que foi planejado",{TA:1,RI:1,Q:1}],
-          ["Começo muito motivada e faço bastante",{TA:2,MO:2,Q:2}],
-          ["Tenho dificuldade até para estabelecer uma rotina",{RI:2,SD:1,Q:2}]
+          ["Sim, sei exatamente por que faço cada parte do treino",{CE:3,Q:0}],
+          ["Em boa parte, mas tenho dúvidas",{CE:1,SD:1,Q:1}],
+          ["Acho que gasto tempo com coisas que poderiam ser melhor organizadas",{SD:2,RI:1,Q:2}],
+          ["Não sinto que meu treino seja eficiente",{SD:3,RI:1,Q:3}],
+          ["Não estou treinando no momento",{TA:1,RI:1,Q:2}]
         ]
       },
       {
-        text:"Quando sua semana fica mais corrida que o normal, o que acontece com seus treinos?",
-        block:"Comportamento",
+        text:"Você sente que seu treino tem uma ordem lógica e prioriza o que realmente importa?",
+        block:"Prioridades do treino",
         answers:[
-          ["Adapto os treinos e continuo fazendo o que consigo",{CE:3,Q:0}],
-          ["Faço menos do que estava planejado",{RI:1,CE:1,Q:1}],
-          ["Acabo faltando vários dias",{TA:1,RI:2,Q:2}],
-          ["Normalmente paro completamente",{TA:2,RI:2,Q:3}]
+          ["Sim, consigo perceber claramente as prioridades",{CE:3,Q:0}],
+          ["Mais ou menos",{CE:1,SD:1,Q:1}],
+          ["Não muito",{SD:2,Q:2}],
+          ["Parece apenas uma sequência de exercícios",{SD:3,Q:3}],
+          ["Nunca pensei nisso / não estou treinando atualmente",{SD:1,RI:1,Q:1}]
         ]
       },
       {
-        text:"Quando você perde alguns treinos, qual pensamento aparece com mais frequência?",
-        block:"Comportamento",
+        text:"No seu treino, você costuma fazer muitos exercícios complementares antes de ter uma base forte nos movimentos principais?",
+        block:"Seleção de exercícios",
         answers:[
-          ["Tudo bem, continuo no próximo treino.",{CE:3,Q:0}],
-          ["Preciso compensar o que perdi.",{TA:2,SD:1,Q:1}],
-          ["Essa semana já não deu certo.",{TA:3,RI:1,Q:2}],
-          ["Vou começar novamente quando conseguir fazer direito.",{TA:3,RI:1,Q:3}]
+          ["Sim, vários",{SD:3,Q:3}],
+          ["Alguns",{SD:2,Q:2}],
+          ["Poucos",{CE:1,SD:1,Q:1}],
+          ["Meu treino é mais focado nos movimentos principais",{CE:3,Q:0}],
+          ["Não sei identificar / não estou treinando",{SD:2,RI:1,Q:1}]
         ]
       },
       {
-        text:"O que mais dificulta sua consistência hoje?",
-        block:"Barreira principal",
+        text:"Quando você faz um exercício, sente que sabe exatamente o que deveria controlar no seu corpo?",
+        block:"Aprendizado motor",
+        answers:[
+          ["Sim, na maioria dos exercícios",{CE:3,Q:0}],
+          ["Em alguns sim, em outros tenho dúvidas",{CE:1,SD:1,Q:1}],
+          ["Frequentemente fico insegura se estou fazendo certo",{SD:3,Q:3}],
+          ["Apenas repito o movimento que me passaram",{SD:3,Q:3}],
+          ["Não estou treinando atualmente",{RI:1,Q:1}]
+        ]
+      },
+      {
+        text:"Você sente que existe uma progressão clara no seu treino?",
+        block:"Progressão",
+        answers:[
+          ["Sim, sei quando e por que aumentar carga, repetições ou dificuldade",{CE:3,Q:0}],
+          ["Existe alguma progressão, mas não é muito clara",{CE:1,SD:1,Q:1}],
+          ["Basicamente tento aumentar peso quando consigo",{SD:2,Q:2}],
+          ["Meu treino muda muito e não consigo acompanhar evolução",{SD:3,Q:3}],
+          ["Não sei / não estou treinando",{SD:1,RI:1,Q:1}]
+        ]
+      },
+      {
+        text:"Ao longo dos últimos meses, você sente que está evoluindo de verdade?",
+        block:"Percepção de resultado",
+        answers:[
+          ["Sim, vejo evolução clara em força, execução e corpo",{CE:3,Q:0}],
+          ["Estou evoluindo, mas mais devagar do que gostaria",{CE:1,SD:1,Q:1}],
+          ["Tenho dificuldade de perceber progresso",{SD:2,Q:2}],
+          ["Parece que estou sempre voltando ao ponto de partida",{TA:3,RI:2,Q:3}],
+          ["Estou parada atualmente",{TA:1,RI:2,Q:2}]
+        ]
+      },
+      {
+        text:"O que mais costuma atrapalhar seus resultados hoje?",
+        block:"Principal barreira",
         answers:[
           ["Falta de tempo",{RI:3,Q:2}],
-          ["Cansaço e rotina corrida",{MO:1,RI:3,Q:2}],
-          ["Falta de motivação",{MO:3,Q:2}],
-          ["Não saber exatamente quanto ou como deveria treinar",{SD:3,Q:2}],
-          ["Começar bem, mas não conseguir manter",{TA:3,MO:1,RI:1,Q:3}]
+          ["Dificuldade de manter frequência",{TA:1,RI:3,Q:3}],
+          ["Não saber se meu treino está bem estruturado",{SD:3,Q:3}],
+          ["Insegurança sobre a execução dos exercícios",{SD:3,Q:3}],
+          ["Falta de progressão clara",{SD:3,Q:2}],
+          ["Cansaço / rotina imprevisível",{MO:1,RI:3,Q:2}]
         ]
       },
       {
-        text:"Você sabe exatamente quanto precisa treinar para alcançar seu objetivo?",
-        block:"Clareza",
+        text:"Quando você perde alguns treinos, como normalmente reage?",
+        block:"Consistência",
         answers:[
-          ["Sim, tenho bastante clareza",{CE:2,Q:0}],
-          ["Tenho uma ideia, mas não tenho certeza",{SD:2,CE:1,Q:1}],
-          ["Acho que deveria treinar mais do que consigo atualmente",{TA:1,RI:2,SD:1,Q:2}],
-          ["Não faço ideia",{SD:3,Q:2}]
+          ["Apenas adapto e continuo",{CE:3,Q:0}],
+          ["Tento encaixar o que conseguir",{CE:1,RI:1,Q:1}],
+          ["Tento compensar fazendo mais depois",{TA:2,SD:1,Q:2}],
+          ["Sinto que ‘perdi a semana’ e recomeço na próxima",{TA:3,RI:1,Q:3}],
+          ["Costumo parar por várias semanas ou meses",{TA:3,RI:2,Q:3}]
         ]
       },
       {
-        text:"Qual é seu principal objetivo com o treino hoje?",
+        text:"Qual resultado você mais gostaria de conquistar com o treino nos próximos meses?",
         block:"Objetivo",
         saveKey:"objetivo",
         answers:[
-          ["Definir o corpo e melhorar minha composição corporal",{Q:1}],
-          ["Ganhar massa muscular",{Q:1}],
-          ["Emagrecer",{Q:1}],
-          ["Ficar mais forte, saudável e funcional",{Q:1}],
-          ["Voltar a me sentir bem com meu corpo e com o treino",{Q:1}]
+          ["Ganhar massa muscular e melhorar o formato do corpo",{Q:1}],
+          ["Reduzir gordura e melhorar definição",{Q:1}],
+          ["Ficar mais forte e funcional",{Q:1}],
+          ["Melhorar saúde e disposição",{Q:1}],
+          ["Voltar a treinar e finalmente conseguir evoluir com continuidade",{TA:1,RI:1,Q:2}]
         ]
       },
       {
-        text:"Qual dessas frases mais representa sua relação com o treino?",
-        block:"Relação com o treino",
-        answers:[
-          ["Treinar já faz parte da minha rotina.",{CE:3,Q:0}],
-          ["Quando estou motivada, treino muito melhor.",{MO:3,Q:1}],
-          ["Se eu não conseguir fazer direito, muitas vezes prefiro nem fazer.",{TA:3,Q:2}],
-          ["Sinto que estou sempre tentando voltar.",{TA:2,MO:1,RI:1,Q:3}],
-          ["Quero treinar, mas ainda não encontrei uma rotina que funcione para mim.",{RI:3,Q:3}]
-        ]
-      },
-      {
-        text:"Se você pudesse mudar apenas UMA coisa nos próximos 6 meses, qual seria?",
-        block:"Desejo de mudança",
-        answers:[
-          ["Finalmente conseguir manter uma rotina",{TA:1,RI:2,Q:2}],
-          ["Ter resultados físicos sem precisar viver para treinar",{RI:2,CE:1,Q:2}],
-          ["Saber exatamente o que fazer e quanto treinar",{SD:3,Q:2}],
-          ["Parar de depender de motivação",{MO:3,Q:2}],
-          ["Evoluir meu corpo e minha força com acompanhamento",{CE:2,Q:3}]
-        ]
-      },
-      {
-        text:"Hoje, o que você sente que mais ajudaria a mudar essa situação?",
-        block:"Solução",
-        saveKey:"solucao",
-        answers:[
-          ["Ter um treino pronto para seguir",{SD:2,Q:1}],
-          ["Aprender a organizar melhor minha rotina",{RI:3,Q:2}],
-          ["Ter uma estratégia adaptada à minha realidade",{RI:2,SD:1,Q:3}],
-          ["Ter acompanhamento para ajustar treino, rotina e dificuldades ao longo do processo",{RI:1,CE:2,Q:4}]
-        ]
-      },
-      {
-        text:"Se existisse um acompanhamento para ajudá-la a construir essa rotina pelos próximos meses, como você se sentiria?",
-        block:"Intenção",
-        saveKey:"interesse",
-        answers:[
-          ["É exatamente o que estou procurando",{Q:5}],
-          ["Teria bastante interesse em conhecer",{Q:4}],
-          ["Talvez, dependeria de como funciona",{Q:2}],
-          ["Neste momento prefiro fazer sozinha",{Q:0}]
-        ]
-      },
-      {
-        text:"Quando você gostaria de finalmente resolver essa dificuldade com os treinos?",
+        text:"Quando você gostaria de resolver essa dificuldade com os treinos?",
         block:"Urgência",
         saveKey:"urgencia",
         answers:[
           ["Quero começar agora",{Q:4}],
           ["Nas próximas semanas",{Q:3}],
           ["Nos próximos meses",{Q:1}],
-          ["Ainda não sei, estou apenas pesquisando",{Q:0}]
+          ["Ainda estou apenas pesquisando",{Q:0}]
         ]
       },
       {
@@ -395,7 +402,7 @@
         block:"Necessidade de acompanhamento",
         saveKey:"autonomia",
         answers:[
-          ["Já tentei sozinha várias vezes e sinto que preciso de acompanhamento",{Q:4}],
+          ["Já tentei várias vezes e sinto que preciso de acompanhamento",{Q:4}],
           ["Acho que consigo avançar, mas com orientação seria muito mais fácil",{Q:3}],
           ["Acredito que consigo resolver sozinha se eu me organizar melhor",{Q:1}],
           ["Não sinto necessidade de acompanhamento neste momento",{Q:0}]
@@ -516,8 +523,8 @@
     function showProcessing(){
       show("processing");
       const msgs = [
-        "Identificando seu padrão de consistência.",
-        "Analisando suas principais barreiras.",
+        "Analisando a eficiência do seu treino.",
+        "Identificando suas principais barreiras.",
         "Preparando seu diagnóstico personalizado."
       ];
       let i=0;
@@ -537,7 +544,7 @@
       if(tied.length===1) return tied[0];
 
       // Desempate por P9 -> P6 -> P5 -> P4
-      const priorityQuestions = [8,5,4,3];
+      const priorityQuestions = [10,9,8,7];
       for(const qi of priorityQuestions){
         const r = responses[qi];
         if(!r) continue;
@@ -551,39 +558,29 @@
     }
 
     function getQualification(){
-      const interesse = extras.interesse || "";
-      const solucao = extras.solucao || "";
       const urgencia = extras.urgencia || "";
       const autonomia = extras.autonomia || "";
-
-      const forteInteresse =
-        interesse === "É exatamente o que estou procurando" ||
-        interesse === "Teria bastante interesse em conhecer";
-
-      const solucaoPremium =
-        solucao === "Ter uma estratégia adaptada à minha realidade" ||
-        solucao === "Ter acompanhamento para ajustar treino, rotina e dificuldades ao longo do processo";
 
       const urgenciaAlta =
         urgencia === "Quero começar agora" ||
         urgencia === "Nas próximas semanas";
 
+      const percebeNecessidadeAlta =
+        autonomia === "Já tentei várias vezes e sinto que preciso de acompanhamento";
+
       const percebeNecessidade =
-        autonomia === "Já tentei sozinha várias vezes e sinto que preciso de acompanhamento" ||
+        percebeNecessidadeAlta ||
         autonomia === "Acho que consigo avançar, mas com orientação seria muito mais fácil";
 
       const isAPlus =
         qScore >= 30 &&
-        interesse === "É exatamente o que estou procurando" &&
-        solucaoPremium &&
         urgenciaAlta &&
-        percebeNecessidade;
+        percebeNecessidadeAlta;
 
       const isA =
         qScore >= 24 &&
-        forteInteresse &&
-        solucaoPremium &&
-        percebeNecessidade;
+        percebeNecessidade &&
+        urgencia !== "Ainda estou apenas pesquisando";
 
       if(isAPlus) return "A+";
       if(isA) return "A";
@@ -701,7 +698,7 @@
         ctaPill.textContent = "Próximo passo recomendado";
         ctaTitle.textContent = "Seu diagnóstico indica que uma estratégia individual pode fazer sentido para você.";
         ctaText.textContent =
-          "Pelas suas respostas, você demonstra não apenas uma dificuldade real com a consistência, mas também interesse em construir uma solução adaptada à sua rotina. Se quiser, fale diretamente comigo para eu entender melhor o seu caso e avaliar se o acompanhamento do Código da Consistência faz sentido para você.";
+          "Pelas suas respostas, existem sinais de que seu treino pode ganhar mais eficiência, clareza e adaptação à sua rotina. Se quiser, fale diretamente comigo para eu entender melhor o seu caso e avaliar se o acompanhamento do Código da Consistência faz sentido para você.";
         ctaLink.href = PREMIUM_URL || "#";
         ctaButton.textContent = "QUERO FALAR SOBRE O MEU CASO";
         ctaTiny.textContent = "Conversa inicial • sem compromisso";
