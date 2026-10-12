@@ -698,29 +698,26 @@
         ctaPill.textContent = "Próximo passo recomendado";
         ctaTitle.textContent = "Seu diagnóstico indica que uma estratégia individual pode fazer sentido para você.";
         ctaText.textContent =
-          "Pelas suas respostas, existem sinais de que seu treino pode ganhar mais eficiência, clareza e adaptação à sua rotina. Se quiser, fale diretamente comigo para eu entender melhor o seu caso e avaliar se o acompanhamento do Código da Consistência faz sentido para você.";
-        ctaLink.href = PREMIUM_URL || "#";
-        ctaButton.textContent = "QUERO FALAR SOBRE O MEU CASO";
-        ctaTiny.textContent = "Conversa inicial • sem compromisso";
+          "Pelas suas respostas, existem sinais de que seu treino pode ganhar mais eficiência, clareza e adaptação à sua rotina. Fale diretamente comigo no WhatsApp para eu entender melhor o seu caso e orientar o próximo passo.";
       }
       else if(qualification === "B"){
         ctaPill.textContent = "Seu próximo passo";
-        ctaTitle.textContent = "Aprofunde os princípios do Código da Consistência.";
+        ctaTitle.textContent = "Existem pontos importantes do seu treino que vale a pena analisar melhor.";
         ctaText.textContent =
-          "Seu diagnóstico mostra que existem pontos importantes para desenvolver. Antes de pensar em um acompanhamento, conheça as 5 Regras do Código da Consistência e entenda como construir uma rotina de treino mais sustentável, eficiente e compatível com a vida real.";
-        ctaLink.href = EBOOK_URL || "#";
-        ctaButton.textContent = "QUERO CONHECER AS 5 REGRAS";
-        ctaTiny.textContent = "E-book gratuito • acesso imediato";
+          "Pelas suas respostas, há espaço para melhorar a eficiência, a organização ou a continuidade do seu treino. Me chame no WhatsApp e me conte um pouco sobre a sua rotina para eu te indicar por onde começar.";
       }
       else{
-        ctaPill.textContent = "Continue desenvolvendo sua estratégia";
-        ctaTitle.textContent = "Consistência também se constrói com clareza.";
+        ctaPill.textContent = "Seu próximo passo";
+        ctaTitle.textContent = "Quer entender melhor o que o seu resultado significa na prática?";
         ctaText.textContent =
-          "Neste momento, o melhor próximo passo é continuar aprendendo e observando quais estratégias realmente funcionam na sua rotina. Acompanhe meus conteúdos sobre treino eficiente, consistência e aplicação prática do Código da Consistência.";
-        ctaLink.href = INSTAGRAM_URL || "#";
-        ctaButton.textContent = "ACOMPANHAR OS CONTEÚDOS";
-        ctaTiny.textContent = "@tiago.consistencia no Instagram";
+          "Seu diagnóstico já mostrou alguns pontos de atenção. Se quiser, me chame no WhatsApp para conversar rapidamente sobre o seu resultado e entender qual próximo passo faz mais sentido para a sua rotina.";
       }
+
+      // Nesta fase, todos os perfis seguem para conversa no WhatsApp.
+      // A qualificação A+/A/B/C continua registrada no CRM para priorização comercial.
+      ctaLink.href = PREMIUM_URL || "#";
+      ctaButton.textContent = "FALAR COM O TIAGO NO WHATSAPP";
+      ctaTiny.textContent = "Conversa inicial • sem compromisso";
 
       show("result");
     }
