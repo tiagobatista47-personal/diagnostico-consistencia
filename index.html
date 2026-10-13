@@ -455,6 +455,27 @@
     let extras = {};
     let isSubmitting = false;
 
+    // Marcos do funil do diagnóstico enviados ao Meta Pixel.
+    // Cada evento dispara apenas uma vez por carregamento da página.
+    const pixelProgress = {
+      start: false,
+      q25: false,
+      q50: false,
+      q75: false
+    };
+
+    function trackPixelCustom(eventName){
+      try {
+        if (typeof fbq === "function") {
+          fbq("trackCustom", eventName, {
+            content_name: "Diagnostico da Consistencia"
+          });
+        }
+      } catch (err) {
+        console.warn("Meta Pixel não pôde registrar " + eventName, err);
+      }
+    }
+
     function show(id){
       document.querySelectorAll(".screen").forEach(s=>s.classList.remove("active"));
       document.getElementById(id).classList.add("active");
@@ -462,6 +483,10 @@
     }
 
     function startQuiz(){
+      if(!pixelProgress.start){
+        trackPixelCustom("StartDiagnostic");
+        pixelProgress.start = true;
+      }
       show("quiz");
       renderQuestion();
     }
@@ -502,6 +527,23 @@
     function selectAnswer(index){
       responses[current] = {index};
       recalculate();
+
+      // current é zero-based. Após responder as perguntas 4, 7 e 11,
+      // registramos aproximadamente 25%, 50% e 75% do questionário.
+      const answeredQuestion = current + 1;
+      if(answeredQuestion >= 4 && !pixelProgress.q25){
+        trackPixelCustom("Quiz25");
+        pixelProgress.q25 = true;
+      }
+      if(answeredQuestion >= 7 && !pixelProgress.q50){
+        trackPixelCustom("Quiz50");
+        pixelProgress.q50 = true;
+      }
+      if(answeredQuestion >= 11 && !pixelProgress.q75){
+        trackPixelCustom("Quiz75");
+        pixelProgress.q75 = true;
+      }
+
       setTimeout(()=>{
         if(current < questions.length-1){
           current++;
