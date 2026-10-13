@@ -675,6 +675,17 @@
         console.log("Payload do lead:",payload);
       }
 
+      // Meta Pixel: registra um Lead somente após o formulário ser validado
+      // e o envio do diagnóstico ser disparado para o CRM.
+      if(typeof fbq === "function"){
+        fbq("track", "Lead", {
+          content_name: "Diagnostico da Consistencia",
+          content_category: "Diagnostico",
+          qualification: qualification,
+          profile: profile
+        });
+      }
+
       renderResult(profile, qualification);
     }
 
