@@ -145,22 +145,7 @@
   <main class="wrap">
     <div class="brand">Código da Consistência</div>
 
-    <section id="start" class="screen active">
-      <div class="card">
-        <div class="pill">Diagnóstico gratuito</div>
-        <h1>Descubra o que está impedindo você de transformar o tempo que tem para treinar em resultados consistentes.</h1>
-        <p>Em poucos minutos, identifique o que está reduzindo a eficiência do seu treino, qual barreira mais interfere na sua continuidade e que tipo de estratégia faz mais sentido para a sua rotina.</p>
-        <div class="benefits">
-          <div class="benefit">✓ 14 perguntas rápidas</div>
-          <div class="benefit">✓ Resultado personalizado</div>
-          <div class="benefit">✓ Direcionamento prático para o próximo passo</div>
-        </div>
-        <button class="btn" onclick="startQuiz()">COMEÇAR DIAGNÓSTICO</button>
-        <div class="tiny">Tempo estimado: cerca de 3 minutos.</div>
-      </div>
-    </section>
-
-    <section id="quiz" class="screen">
+    <section id="quiz" class="screen active">
       <div class="card">
         <div class="qmeta">
           <span id="qCount">Pergunta 1 de 14</span>
@@ -482,15 +467,6 @@
       window.scrollTo({top:0,behavior:"smooth"});
     }
 
-    function startQuiz(){
-      if(!pixelProgress.start){
-        trackPixelCustom("StartDiagnostic");
-        pixelProgress.start = true;
-      }
-      show("quiz");
-      renderQuestion();
-    }
-
     function renderQuestion(){
       const q = questions[current];
       document.getElementById("qCount").textContent = `Pergunta ${current+1} de ${questions.length}`;
@@ -525,6 +501,13 @@
     }
 
     function selectAnswer(index){
+      // Como o diagnóstico agora abre diretamente na pergunta 1, consideramos
+      // que ele foi efetivamente iniciado quando a pessoa responde a primeira pergunta.
+      if(!pixelProgress.start){
+        trackPixelCustom("StartDiagnostic");
+        pixelProgress.start = true;
+      }
+
       responses[current] = {index};
       recalculate();
 
@@ -774,6 +757,12 @@
 
       show("result");
     }
-  </script>
+  
+    // A página já abre diretamente na primeira pergunta, sem tela intermediária.
+    // PageView é disparado pelo Pixel base; StartDiagnostic é disparado na primeira resposta.
+    document.addEventListener("DOMContentLoaded", () => {
+      renderQuestion();
+    });
+</script>
 </body>
 </html>
