@@ -3,8 +3,8 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <meta name="description" content="Diagnóstico da Consistência — descubra o que está impedindo você de transformar o tempo que tem para treinar em resultados consistentes." />
-  <title>Diagnóstico da Consistência</title>
+  <meta name="description" content="Solicite uma análise do seu treino e descubra onde sua rotina pode estar perdendo eficiência, resultado e consistência." />
+  <title>Análise do seu treino | Código da Consistência</title>
 
   <!-- Meta Pixel Code -->
   <script>
@@ -145,7 +145,23 @@
   <main class="wrap">
     <div class="brand">Código da Consistência</div>
 
-    <section id="quiz" class="screen active">
+    <section id="intro" class="screen active">
+      <div class="card">
+        <div class="pill">Análise do seu treino</div>
+        <h1>Descubra onde o seu treino pode estar perdendo eficiência.</h1>
+        <p>Nos próximos <strong>3 minutos</strong>, você responderá uma série rápida de perguntas sobre seu treino, sua rotina e a forma como vem buscando resultado.</p>
+        <p class="muted">Ao final, você receberá uma análise com os principais pontos de atenção e um próximo passo recomendado para a sua realidade.</p>
+        <div class="benefits">
+          <div class="benefit">✓ Entenda se seu treino está usando bem o tempo que você tem disponível.</div>
+          <div class="benefit">✓ Identifique o principal gargalo entre rotina, execução, progressão e organização.</div>
+          <div class="benefit">✓ Receba uma orientação inicial baseada nas suas respostas.</div>
+        </div>
+        <button class="btn" onclick="startAnalysis()">INICIAR MINHA ANÁLISE</button>
+        <div class="tiny">Leva cerca de 3 minutos.</div>
+      </div>
+    </section>
+
+    <section id="quiz" class="screen">
       <div class="card">
         <div class="qmeta">
           <span id="qCount">Pergunta 1 de 14</span>
@@ -168,9 +184,9 @@
 
     <section id="lead" class="screen">
       <div class="card">
-        <div class="pill">Seu diagnóstico está pronto</div>
-        <h2>Preencha seus dados para ver o resultado.</h2>
-        <p class="muted">Seus dados também serão usados para enviar conteúdos e informações relacionadas ao Código da Consistência.</p>
+        <div class="pill">Sua análise está pronta</div>
+        <h2>Preencha seus dados para receber sua análise.</h2>
+        <p class="muted">Seus dados também poderão ser usados para enviar conteúdos e informações relacionadas ao Código da Consistência.</p>
         <div class="fields">
           <input id="name" type="text" placeholder="Seu nome" />
           <input id="whatsapp" type="tel" placeholder="WhatsApp com DDD" />
@@ -181,7 +197,7 @@
           </label>
         </div>
         <div id="formError" class="error"></div>
-        <button id="submitLeadBtn" class="btn" onclick="submitLead()">VER MEU DIAGNÓSTICO</button>
+        <button id="submitLeadBtn" class="btn" onclick="submitLead()">VER MINHA ANÁLISE</button>
       </div>
     </section>
 
@@ -211,7 +227,7 @@
    <div class="cta-live">
   <div id="ctaPill" class="pill">Seu próximo passo</div>
 
-  <h2 id="ctaTitle">Agora transforme esse diagnóstico em ação.</h2>
+  <h2 id="ctaTitle">Agora transforme essa análise em ação.</h2>
 
   <p id="ctaText"></p>
 
@@ -231,8 +247,16 @@
     // ===========================
     const WEBHOOK_URL = "https://script.google.com/macros/s/AKfycbyy9_fXG4s9TAETYU3o3Q-r5gffuJ0Qs9bubkh1H6FpjVczcdY9PZrFvwxoTGDgReup-g/exec";
     const EBOOK_URL = "https://drive.google.com/file/d/1Zu6jzPdjNZ9gVWrkFVOGJfXaNZw-baVX/view";
-    const PREMIUM_URL = "https://wa.me/5511911229301?text=Oi%21%20Acabei%20de%20fazer%20o%20Diagn%C3%B3stico%20da%20Consist%C3%AAncia%20e%20gostaria%20de%20entender%20melhor%20meu%20resultado.";
+    const PREMIUM_URL = "https://wa.me/5511911229301?text=Oi%20Tiago!%20Acabei%20de%20fazer%20a%20an%C3%A1lise%20do%20meu%20treino%20e%20gostaria%20de%20entender%20melhor%20meu%20resultado.";
     const INSTAGRAM_URL = "https://www.instagram.com/tiago.consistencia/";
+
+    // TRACKING PRÓPRIO
+    // Deixe FALSE enquanto o Apps Script ainda não estiver preparado para receber eventos de tracking.
+    // Depois de atualizarmos o webhook, altere apenas para TRUE.
+    const TRACKING_ENABLED = false;
+    const TRACKING_WEBHOOK_URL = WEBHOOK_URL;
+    const TRACKING_STORAGE_KEY = "cdc_tracking_session_id";
+    const TRACKING_FLAG_PREFIX = "cdc_tracking_sent_";
     // ===========================
     // DADOS DO QUIZ
     // ===========================
@@ -461,6 +485,88 @@
       }
     }
 
+    function getOrCreateSessionId(){
+      try{
+        let sessionId = sessionStorage.getItem(TRACKING_STORAGE_KEY);
+        if(!sessionId){
+          const randomPart = (window.crypto && crypto.randomUUID)
+            ? crypto.randomUUID()
+            : Math.random().toString(36).slice(2) + Date.now().toString(36);
+          sessionId = "sess_" + randomPart;
+          sessionStorage.setItem(TRACKING_STORAGE_KEY, sessionId);
+        }
+        return sessionId;
+      }catch(e){
+        return "sess_" + Math.random().toString(36).slice(2) + Date.now().toString(36);
+      }
+    }
+
+    function getTrackingContext(){
+      const utms = getUTMs();
+      return {
+        session_id: getOrCreateSessionId(),
+        page_url: window.location.href,
+        page_path: window.location.pathname,
+        referrer: document.referrer || "",
+        title: document.title,
+        screen_width: window.screen ? window.screen.width : "",
+        viewport_width: window.innerWidth || "",
+        language: navigator.language || "",
+        ...utms
+      };
+    }
+
+    function trackingAlreadySent(eventName){
+      try{
+        return sessionStorage.getItem(TRACKING_FLAG_PREFIX + eventName) === "1";
+      }catch(e){
+        return false;
+      }
+    }
+
+    function markTrackingSent(eventName){
+      try{
+        sessionStorage.setItem(TRACKING_FLAG_PREFIX + eventName, "1");
+      }catch(e){}
+    }
+
+    function trackOwnEvent(eventName, extra = {}, oncePerSession = true){
+      if(!TRACKING_ENABLED || !TRACKING_WEBHOOK_URL) return;
+      if(oncePerSession && trackingAlreadySent(eventName)) return;
+
+      const payload = {
+        type: "tracking",
+        event: eventName,
+        timestamp: new Date().toISOString(),
+        ...getTrackingContext(),
+        ...extra
+      };
+
+      if(oncePerSession) markTrackingSent(eventName);
+
+      try{
+        fetch(TRACKING_WEBHOOK_URL, {
+          method: "POST",
+          mode: "no-cors",
+          keepalive: true,
+          headers: {"Content-Type":"text/plain;charset=utf-8"},
+          body: JSON.stringify(payload)
+        }).catch(err => console.warn("Falha no tracking próprio:", err));
+      }catch(err){
+        console.warn("Falha no tracking próprio:", err);
+      }
+    }
+
+    function startAnalysis(){
+      if(!pixelProgress.start){
+        trackPixelCustom("StartDiagnostic");
+        pixelProgress.start = true;
+      }
+      trackOwnEvent("StartDiagnostic", {question: 1});
+      show("quiz");
+      renderQuestion();
+    }
+
     function show(id){
       document.querySelectorAll(".screen").forEach(s=>s.classList.remove("active"));
       document.getElementById(id).classList.add("active");
@@ -501,13 +607,6 @@
     }
 
     function selectAnswer(index){
-      // Como o diagnóstico agora abre diretamente na pergunta 1, consideramos
-      // que ele foi efetivamente iniciado quando a pessoa responde a primeira pergunta.
-      if(!pixelProgress.start){
-        trackPixelCustom("StartDiagnostic");
-        pixelProgress.start = true;
-      }
-
       responses[current] = {index};
       recalculate();
 
@@ -516,14 +615,17 @@
       const answeredQuestion = current + 1;
       if(answeredQuestion >= 4 && !pixelProgress.q25){
         trackPixelCustom("Quiz25");
+        trackOwnEvent("Quiz25", {answered_question: answeredQuestion});
         pixelProgress.q25 = true;
       }
       if(answeredQuestion >= 7 && !pixelProgress.q50){
         trackPixelCustom("Quiz50");
+        trackOwnEvent("Quiz50", {answered_question: answeredQuestion});
         pixelProgress.q50 = true;
       }
       if(answeredQuestion >= 11 && !pixelProgress.q75){
         trackPixelCustom("Quiz75");
+        trackOwnEvent("Quiz75", {answered_question: answeredQuestion});
         pixelProgress.q75 = true;
       }
 
@@ -550,7 +652,7 @@
       const msgs = [
         "Analisando a eficiência do seu treino.",
         "Identificando suas principais barreiras.",
-        "Preparando seu diagnóstico personalizado."
+        "Preparando sua análise personalizada."
       ];
       let i=0;
       const t = setInterval(()=>{
@@ -657,6 +759,8 @@
       });
 
       const payload = {
+        type:"lead",
+        session_id:getOrCreateSessionId(),
         nome:name,
         whatsapp,
         email,
@@ -689,7 +793,7 @@
           isSubmitting = false;
           const submitBtn = document.getElementById("submitLeadBtn");
           submitBtn.disabled = false;
-          submitBtn.textContent = "VER MEU DIAGNÓSTICO";
+          submitBtn.textContent = "VER MINHA ANÁLISE";
           submitBtn.style.opacity = "1";
           submitBtn.style.cursor = "pointer";
 
@@ -710,6 +814,12 @@
           profile: profile
         });
       }
+
+      trackOwnEvent("Lead", {
+        qualification: qualification,
+        profile: profile,
+        score_qualificacao: qScore
+      });
 
       renderResult(profile, qualification);
     }
@@ -732,7 +842,7 @@
 
       if(qualification === "A+" || qualification === "A"){
         ctaPill.textContent = "Próximo passo recomendado";
-        ctaTitle.textContent = "Seu diagnóstico indica que uma estratégia individual pode fazer sentido para você.";
+        ctaTitle.textContent = "Sua análise indica que uma estratégia individual pode fazer sentido para você.";
         ctaText.textContent =
           "Pelas suas respostas, existem sinais de que seu treino pode ganhar mais eficiência, clareza e adaptação à sua rotina. Fale diretamente comigo no WhatsApp para eu entender melhor o seu caso e orientar o próximo passo.";
       }
@@ -746,7 +856,7 @@
         ctaPill.textContent = "Seu próximo passo";
         ctaTitle.textContent = "Quer entender melhor o que o seu resultado significa na prática?";
         ctaText.textContent =
-          "Seu diagnóstico já mostrou alguns pontos de atenção. Se quiser, me chame no WhatsApp para conversar rapidamente sobre o seu resultado e entender qual próximo passo faz mais sentido para a sua rotina.";
+          "Sua análise já mostrou alguns pontos de atenção. Se quiser, me chame no WhatsApp para conversar rapidamente sobre o seu resultado e entender qual próximo passo faz mais sentido para a sua rotina.";
       }
 
       // Nesta fase, todos os perfis seguem para conversa no WhatsApp.
@@ -754,13 +864,20 @@
       ctaLink.href = PREMIUM_URL || "#";
       ctaButton.textContent = "FALAR COM O TIAGO NO WHATSAPP";
       ctaTiny.textContent = "Conversa inicial • sem compromisso";
+      ctaLink.onclick = () => {
+        trackOwnEvent("WhatsAppClick", {
+          qualification: qualification,
+          profile: profile
+        });
+      };
 
       show("result");
     }
   
-    // A página já abre diretamente na primeira pergunta, sem tela intermediária.
-    // PageView é disparado pelo Pixel base; StartDiagnostic é disparado na primeira resposta.
+    // O Meta Pixel continua registrando PageView normalmente.
+    // O tracking próprio registra a visita mesmo fora das campanhas da Meta.
     document.addEventListener("DOMContentLoaded", () => {
+      trackOwnEvent("PageView");
       renderQuestion();
     });
 </script>
